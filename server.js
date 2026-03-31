@@ -1,7 +1,7 @@
 const express = require("express");
-const { twiml: { VoiceResponse } } = require("twilio");
 
 const app = express();
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const FORWARD_NUMBERS = [
@@ -13,26 +13,20 @@ const FORWARD_NUMBERS = [
 let currentIndex = 0;
 
 app.get("/", (req, res) => {
-  res.send("Server running");
+  res.send("Round robin server is running.");
 });
 
-app.post("/voice", (req, res) => {
-  const twiml = new VoiceResponse();
-
-  const numberToDial = FORWARD_NUMBERS[currentIndex];
+app.post("/next-number", (req, res) => {
+  const transferNumber = FORWARD_NUMBERS[currentIndex];
   currentIndex = (currentIndex + 1) % FORWARD_NUMBERS.length;
 
-  const dial = twiml.dial({
-    callerId: req.body.To
+  res.json({
+    transfer_number: transferNumber,
+    reason: "Next round robin destination"
   });
-
-  dial.number(numberToDial);
-
-  res.type("text/xml");
-  res.send(twiml.toString());
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running");
+  console.log(`Server running on port ${PORT}`);
 });
