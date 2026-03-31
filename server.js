@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: false }));
 
 const FORWARD_NUMBERS = [
   "+19738565029",
-  "+17323713674",
+  "+13474241577",
   "+15043448130"
 ];
 
